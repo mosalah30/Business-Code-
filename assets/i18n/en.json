@@ -1,0 +1,12 @@
+{
+  "login": "Login",
+  "welcome": "Welcome to Business Card!",
+  "welcome_body": "Start scanning and managing your business cards",
+  "warning": "Warning",
+  "error": "Error",
+  "success": "Success",
+  "privacy_policy": "Privacy Policy",
+  "language_success": "Language changed successfully",
+  "server_error": "Server Error"
+
+}

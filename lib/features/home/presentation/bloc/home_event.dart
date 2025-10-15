@@ -24,14 +24,7 @@ class SignUpEvent extends HomeEvent {
   List<Object> get props => [name, email, password];
 }
 
-class SignInEvent extends HomeEvent {
-  final String email;
-  final String password;
-
-  const SignInEvent({required this.email, required this.password});
-
-  @override
-  List<Object> get props => [email, password];
+class AddCardEvent extends HomeEvent {
 }
 
 class ChangeLanguageEvent extends HomeEvent {}

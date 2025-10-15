@@ -11,15 +11,6 @@ class HomeInitial extends HomeState {}
 
 class HomeLoading extends HomeState {}
 
-
-
-class HomeError extends HomeState {
-  final String message;
-
-  const HomeError(this.message);
-
-  @override
-  List<Object> get props => [message];
-}
+class AddCardState extends HomeState {}
 
 class HomeLanguageChanged extends HomeState {}

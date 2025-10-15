@@ -5,21 +5,45 @@ import 'package:business_code_by_mohamed_salah/core/utils/print.dart';
 import 'package:business_code_by_mohamed_salah/core/widgets/custom_text.dart';
 import 'package:business_code_by_mohamed_salah/features/home/presentation/bloc/home_bloc.dart';
 import 'package:business_code_by_mohamed_salah/features/home/presentation/bloc/home_state.dart';
+import 'package:business_code_by_mohamed_salah/features/home/presentation/view/widgets/card_widget.dart';
 import 'package:business_code_by_mohamed_salah/features/home/presentation/view/widgets/drawer_widget.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
 
-import '../../../../core/services/localization_service.dart';
-import '../../../../core/services/service_locator.dart';
 import '../../../../core/utils/snackbar.dart';
+import '../bloc/home_event.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +52,9 @@ class HomeScreen extends StatelessWidget {
         if (state is HomeLanguageChanged) {
           iPrint(context.locale.languageCode);
           SnackBarUtil.showSuccessSnackBar(context: context, message: "language_success".tr());
+        }
+        if (state is AddCardState) {
+          _scrollToBottom();
         }
       },
       builder: (context, state) {
@@ -38,31 +65,59 @@ class HomeScreen extends StatelessWidget {
             backgroundColor: ColorConstants.primaryColor,
             title: Hero(tag: AppConstants.animateTransition, child: SvgPicture.asset(AssetsConstant.whiteLogoIcon)),
           ),
-          body: Center(
-            child: Column(
-              children: [
-                Lottie.asset(LottieConstants.emptyLottie),
-                SizedBox(height: 24.h),
-                CustomTextWidget(
-                  text: 'welcome'.tr(),
-                  fontSize: 24.sp,
-                  fontWeight: FontWeight.bold,
-                  textAlign: TextAlign.center,
+          body: Stack(
+            alignment: Alignment.center,
+            children: [
+              context.read<HomeBloc>().businessCardsList.isNotEmpty
+                  ? ListView.builder(
+                      controller: _scrollController,
+                      itemCount: context.watch<HomeBloc>().businessCardsList.length,
+                      itemBuilder: (context, index) {
+                        final card = context.watch<HomeBloc>().businessCardsList[index];
+                        return AnimatedOpacity(
+                          opacity: 1,
+                          duration: const Duration(milliseconds: 400),
+                          child: Padding(
+                            padding: EdgeInsets.only(bottom: 16.h),
+                            child: BusinessCardWidget(card: card),
+                          ),
+                        );
+                      },
+                    )
+                  : Center(
+                      child: Column(
+                        children: [
+                          Lottie.asset(LottieConstants.emptyLottie),
+                          SizedBox(height: 24.h),
+                          CustomTextWidget(
+                            text: 'welcome'.tr(),
+                            fontSize: 24.sp,
+                            fontWeight: FontWeight.bold,
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(height: 16.h),
+                          CustomTextWidget(
+                            text: 'welcome_body'.tr(),
+                            fontSize: 16.sp,
+                            color: Colors.grey,
+                            overflow: TextOverflow.visible,
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    ),
+              if (state is HomeLoading) ...[
+                Container(
+                  color: Colors.black.withOpacity(0.5),
+                  child: Center(child: CircularProgressIndicator(color: ColorConstants.primaryColor)),
                 ),
-                SizedBox(height: 16.h),
-                CustomTextWidget(
-                  text: 'welcome_body'.tr(),
-                  fontSize: 16.sp,
-                  color: Colors.grey,
-                  overflow: TextOverflow.visible,
-                  textAlign: TextAlign.center,
-                ),
+                Lottie.asset(LottieConstants.cardLottie, width: 300.w),
               ],
-            ),
+            ],
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: () {
-              SnackBarUtil.showSuccessSnackBar(context: context, message: "language_success".tr());
+              context.read<HomeBloc>().add(AddCardEvent());
             },
             backgroundColor: ColorConstants.primaryColor,
             child: SvgPicture.asset(AssetsConstant.scannerIcon, color: Colors.white, width: 35.w),

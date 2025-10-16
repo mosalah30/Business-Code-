@@ -9,14 +9,17 @@ Before you begin, ensure you have the following installed:
 ### Required Software
 
 1. **Flutter SDK** (version 3.9.2 or higher)
+
    - Download from: https://flutter.dev/docs/get-started/install
    - Verify installation: `flutter --version`
 
 2. **Dart SDK** (version 3.9.0 or higher)
+
    - Comes bundled with Flutter
    - Verify: `dart --version`
 
 3. **Git**
+
    - Download from: https://git-scm.com/downloads
    - Verify: `git --version`
 
@@ -27,6 +30,7 @@ Before you begin, ensure you have the following installed:
 ### For Android Development
 
 5. **Android SDK**
+
    - Installed via Android Studio
    - Minimum SDK: API 21 (Android 5.0)
    - Target SDK: API 34
@@ -38,10 +42,12 @@ Before you begin, ensure you have the following installed:
 ### For iOS Development (macOS only)
 
 7. **Xcode** (latest version)
+
    - Download from Mac App Store
    - Install command line tools: `xcode-select --install`
 
 8. **CocoaPods**
+
    - Install: `sudo gem install cocoapods`
    - Verify: `pod --version`
 
@@ -83,6 +89,7 @@ flutter packages pub run build_runner build --delete-conflicting-outputs
 ```
 
 This generates the following files:
+
 - `lib/features/home/data/models/user.g.dart`
 - `lib/features/home/data/models/business_card.g.dart`
 
@@ -151,6 +158,7 @@ Then open `ios/Runner.xcworkspace` in Xcode to archive and distribute.
 #### 1. "flutter: command not found"
 
 **Solution:** Add Flutter to your PATH
+
 ```bash
 export PATH="$PATH:`pwd`/flutter/bin"
 ```
@@ -159,7 +167,8 @@ Add this line to your shell profile (`~/.bashrc`, `~/.zshrc`, etc.)
 
 #### 2. "Gradle build failed"
 
-**Solution:** 
+**Solution:**
+
 - Clean the build: `flutter clean`
 - Get dependencies: `flutter pub get`
 - Try again: `flutter run`
@@ -167,6 +176,7 @@ Add this line to your shell profile (`~/.bashrc`, `~/.zshrc`, etc.)
 #### 3. "CocoaPods not installed" (iOS)
 
 **Solution:**
+
 ```bash
 sudo gem install cocoapods
 pod setup
@@ -175,13 +185,15 @@ pod setup
 #### 4. "Hive type adapter not found"
 
 **Solution:** Regenerate the adapters
+
 ```bash
 flutter packages pub run build_runner build --delete-conflicting-outputs
 ```
 
 #### 5. "Version solving failed"
 
-**Solution:** 
+**Solution:**
+
 - Delete `pubspec.lock`
 - Run `flutter pub get`
 - If still failing, check Flutter version compatibility
@@ -189,6 +201,7 @@ flutter packages pub run build_runner build --delete-conflicting-outputs
 #### 6. Android license issues
 
 **Solution:**
+
 ```bash
 flutter doctor --android-licenses
 ```
@@ -198,6 +211,7 @@ Accept all licenses when prompted.
 #### 7. iOS signing issues
 
 **Solution:**
+
 - Open `ios/Runner.xcworkspace` in Xcode
 - Select your development team in Signing & Capabilities
 - Ensure you have a valid provisioning profile
@@ -271,6 +285,7 @@ This app doesn't require any environment variables or API keys as it works compl
 ## Database Location
 
 Hive databases are stored in:
+
 - **Android:** `/data/data/com.example.business_code_by_mohamed_salah/app_flutter/`
 - **iOS:** `~/Library/Containers/com.example.businessCodeByMohamedSalah/Data/Documents/`
 

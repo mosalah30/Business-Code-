@@ -1,3 +1,4 @@
+import 'package:business_code_by_mohamed_salah/core/utils/print.dart';
 import 'package:dartz/dartz.dart';
 
 import '../../../../core/error/failures.dart';
@@ -5,7 +6,7 @@ import '../../../../core/services/storage_service.dart';
 import '../../domain/entities/user_entity.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../mappers/user_mapper.dart';
-import '../../../home/data/models/user.dart';
+import '../models/user.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   @override
@@ -19,7 +20,7 @@ class AuthRepositoryImpl implements AuthRepository {
       final emailTakenResult = await isEmailTaken(email);
       return emailTakenResult.fold((failure) => Left(failure), (isTaken) async {
         if (isTaken) {
-          return Left(AuthFailure('Email already exists'));
+          return Left(AuthFailure('email_already_taken'));
         }
 
         // Create new user model
@@ -28,7 +29,6 @@ class AuthRepositoryImpl implements AuthRepository {
           email: email,
           password: password,
         );
-
         // Save to storage
         await StorageService.saveUser(userModel);
 
@@ -40,7 +40,7 @@ class AuthRepositoryImpl implements AuthRepository {
         return Right(userEntity);
       });
     } catch (e) {
-      return Left(AuthFailure('Registration failed: ${e.toString()}'));
+      return Left(AuthFailure('sign_up_failed'));
     }
   }
 
@@ -53,12 +53,12 @@ class AuthRepositoryImpl implements AuthRepository {
       // Get user by email
       final userModel = await StorageService.getUserByEmail(email);
       if (userModel == null) {
-        return Left(AuthFailure('Invalid email or password'));
+        return Left(AuthFailure('user_not_found'));
       }
 
       // Verify password
       if (!userModel.verifyPassword(password)) {
-        return Left(AuthFailure('Invalid email or password'));
+        return Left(AuthFailure('invalid_password'));
       }
 
       // Set current user session
@@ -68,7 +68,7 @@ class AuthRepositoryImpl implements AuthRepository {
       final userEntity = UserMapper.toEntity(userModel);
       return Right(userEntity);
     } catch (e) {
-      return Left(AuthFailure('Sign in failed: ${e.toString()}'));
+      return Left(AuthFailure('user_not_found'));
     }
   }
 
@@ -78,7 +78,7 @@ class AuthRepositoryImpl implements AuthRepository {
       await StorageService.clearSession();
       return const Right(null);
     } catch (e) {
-      return Left(AuthFailure('Sign out failed: ${e.toString()}'));
+      return Left(AuthFailure('sign_out_failed'));
     }
   }
 
@@ -99,7 +99,7 @@ class AuthRepositoryImpl implements AuthRepository {
       final userEntity = UserMapper.toEntity(userModel);
       return Right(userEntity);
     } catch (e) {
-      return Left(AuthFailure('Failed to get current user: ${e.toString()}'));
+      return Left(AuthFailure('failed_to_get_current_user'));
     }
   }
 
@@ -109,7 +109,7 @@ class AuthRepositoryImpl implements AuthRepository {
       final exists = await StorageService.isEmailTaken(email);
       return Right(exists);
     } catch (e) {
-      return Left(AuthFailure('Failed to check email: ${e.toString()}'));
+      return Left(AuthFailure('failed_to_check_email'));
     }
   }
 }

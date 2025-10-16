@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+
 class BusinessCardEntity {
+  final String? id;
+  final String? userId;
   final String name;
   final String title;
   final String location;
@@ -9,6 +12,8 @@ class BusinessCardEntity {
   final List<IconData> socialIcons;
 
   BusinessCardEntity({
+    this.id,
+    this.userId,
     required this.name,
     required this.title,
     required this.location,

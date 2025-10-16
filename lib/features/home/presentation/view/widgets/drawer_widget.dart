@@ -1,4 +1,4 @@
-import 'package:business_code_by_mohamed_salah/core/utils/snackbar.dart';
+import 'package:business_code_by_mohamed_salah/router/routes_constants.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -24,51 +24,89 @@ class DrawerWidget extends StatelessWidget {
         children: [
           SizedBox(height: .1.sh),
           SvgPicture.asset(AssetsConstant.logoIcon),
-          SizedBox(height: 16.h),
-          //
-          // Row(
-          //   children: [
-          //     SizedBox(width: 16.w),
-          //     InkWell(
-          //       onTap: () {
-          //         context.pop();
-          //       },
-          //       child: Container(
-          //         padding: EdgeInsets.all(8.r),
-          //         decoration: BoxDecoration(
-          //           borderRadius: BorderRadius.circular(10),
-          //           color: ColorConstants.primaryOpacityColor,
-          //         ),
-          //         child: Icon(Icons.close, size: 30, color: Colors.white),
-          //       ),
-          //     ),
-          //   ],
-          // ),
-          SizedBox(height: 16.h),
-          Container(
-            margin: EdgeInsets.all(8.h),
-            padding: EdgeInsets.all(12.r),
-            decoration: BoxDecoration(color: ColorConstants.primaryColor, borderRadius: BorderRadius.circular(15.r)),
-            child: Row(
-              children: [
-                const Icon(Icons.email, color: Colors.white),
-                SizedBox(width: 16.w),
-                CustomTextWidget(text: 'login'.tr(), color: Colors.white),
-              ],
+          SizedBox(height: 32.h),
+          context.read<HomeBloc>().isUserLoggedIn()
+              ? Container(
+                  margin: EdgeInsets.all(8.h),
+                  padding: EdgeInsets.all(12.r),
+                  decoration: BoxDecoration(
+                    color: ColorConstants.primaryColor,
+                    borderRadius: BorderRadius.circular(15.r),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.person, color: Colors.white),
+                      SizedBox(width: 16.w),
+                      CustomTextWidget(
+                        fontSize: 10.sp,
+                        text: '${'welcome'.tr()}, ${context.read<HomeBloc>().getCurrentUserName()}',
+                        color: Colors.white,
+                      ),
+                    ],
+                  ),
+                )
+              : InkWell(
+                  onTap: () {
+                    context.pop();
+                    context.push(RoutesConstants.signInRoute);
+                  },
+                  child: Container(
+                    margin: EdgeInsets.all(8.h),
+                    padding: EdgeInsets.all(12.r),
+                    decoration: BoxDecoration(
+                      color: ColorConstants.primaryColor,
+                      borderRadius: BorderRadius.circular(15.r),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.email, color: Colors.white),
+                        SizedBox(width: 16.w),
+                        CustomTextWidget(text: 'login'.tr(), color: Colors.white),
+                      ],
+                    ),
+                  ),
+                ),
+
+          InkWell(
+            onTap: () {
+              context.pop();
+              context.push(RoutesConstants.privacyPolicyRoute);
+            },
+            child: Container(
+              margin: EdgeInsets.all(8.h),
+              padding: EdgeInsets.all(12.r),
+              decoration: BoxDecoration(color: ColorConstants.primaryColor, borderRadius: BorderRadius.circular(15.r)),
+              child: Row(
+                children: [
+                  const Icon(Icons.privacy_tip_outlined, color: Colors.white),
+                  SizedBox(width: 16.w),
+                  CustomTextWidget(text: 'privacy_policy'.tr(), color: Colors.white),
+                ],
+              ),
             ),
           ),
-          Container(
-            margin: EdgeInsets.all(8.h),
-            padding: EdgeInsets.all(12.r),
-            decoration: BoxDecoration(color: ColorConstants.primaryColor, borderRadius: BorderRadius.circular(15.r)),
-            child: Row(
-              children: [
-                const Icon(Icons.privacy_tip_outlined, color: Colors.white),
-                SizedBox(width: 16.w),
-                CustomTextWidget(text: 'privacy_policy'.tr(), color: Colors.white),
-              ],
+          if (context.read<HomeBloc>().isUserLoggedIn())
+            InkWell(
+              onTap: () {
+                context.pop();
+                context.read<HomeBloc>().add(SignOutEvent());
+              },
+              child: Container(
+                margin: EdgeInsets.all(8.h),
+                padding: EdgeInsets.all(12.r),
+                decoration: BoxDecoration(
+                  color: ColorConstants.primaryColor,
+                  borderRadius: BorderRadius.circular(15.r),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.logout, color: Colors.white),
+                    SizedBox(width: 16.w),
+                    CustomTextWidget(text: 'sign_out'.tr(), color: Colors.white),
+                  ],
+                ),
+              ),
             ),
-          ),
           Spacer(),
           InkWell(
             onTap: () async {

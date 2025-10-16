@@ -7,11 +7,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'core/services/localization_service.dart';
+import 'core/services/storage_service.dart';
 import 'core/theme/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
+  await StorageService.init();
+
   await setupLocator();
 
   runApp(
@@ -57,7 +60,6 @@ class _MyAppState extends State<MyApp> {
       splitScreenMode: true,
       builder: (_, __) {
         return MaterialApp.router(
-      //    key: ValueKey(context.locale.languageCode), // 👈 forces rebuild
           localizationsDelegates: context.localizationDelegates,
           supportedLocales: context.supportedLocales,
           debugShowCheckedModeBanner: false,

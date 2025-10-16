@@ -1,17 +1,17 @@
 import 'dart:math';
-
-import 'package:business_code_by_mohamed_salah/features/auth/presentation/login/bloc/login_state.dart';
+import 'package:business_code_by_mohamed_salah/core/services/storage_service.dart';
+import 'package:business_code_by_mohamed_salah/core/utils/print.dart';
 import 'package:business_code_by_mohamed_salah/features/home/domain/entities/business_card_entity.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+import '../../domain/usecase/home_use_case.dart';
 import 'home_event.dart';
 import 'home_state.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   List<BusinessCardEntity> businessCardsList = [];
-  final List<BusinessCardEntity> businessCards = [
+  late final List<BusinessCardEntity> businessCards = [
     BusinessCardEntity(
       name: "محمد علي",
       title: "مهندس تجربة مستخدم",
@@ -103,25 +103,62 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       socialIcons: [FontAwesomeIcons.linkedin, FontAwesomeIcons.github, FontAwesomeIcons.instagram],
     ),
   ];
+  final GetBusinessCardUseCase getBusinessCard;
+  final SaveBusinessCardUseCase saveBusinessCard;
+  final DeleteBusinessCardUseCase deleteBusinessCard;
 
-
-  HomeBloc() : super(HomeInitial()) {
+  HomeBloc({required this.getBusinessCard, required this.deleteBusinessCard, required this.saveBusinessCard})
+    : super(HomeInitial()) {
     on<ChangeLanguageEvent>(_onChangeLanguage);
     on<AddCardEvent>(_addCard);
-
+    on<InitEvent>(_getUserCard);
+    on<SignOutEvent>(_signOut);
   }
 
   void _onChangeLanguage(ChangeLanguageEvent event, Emitter<HomeState> emit) {
-    emit(HomeInitial());
+    emit(HomeLoading());
     emit(HomeLanguageChanged());
+  }
+
+  void _getUserCard(InitEvent event, Emitter<HomeState> emit) async {
+    emit(HomeLoading());
+    iPrint('cc');
+    if (StorageService.isLoggedIn()) {
+      iPrint('cc');
+      var either = await getBusinessCard(StorageService.getCurrentUserId()!);
+      either.fold((l) => emit(HomeError(l.message)), (r) {
+        businessCardsList = r;
+        emit(AddCardState());
+      });
+    }
+    emit(AddCardState());
   }
 
   Future<void> _addCard(AddCardEvent event, Emitter<HomeState> emit) async {
     emit(HomeLoading());
-    businessCardsList.add(businessCards[Random().nextInt(businessCards.length)]);
-    await Future.delayed(const Duration(seconds: 1));
-    emit(AddCardState());
+    if (StorageService.isLoggedIn()) {
+      final userId = StorageService.getCurrentUserId()!;
+      var item = businessCards[Random().nextInt(businessCards.length)];
+      businessCardsList.add(item);
+      await saveBusinessCard(SaveParams(entity: item, userId: userId));
+      await Future.delayed(const Duration(seconds: 1));
+      emit(AddCardState());
+    } else {
+      emit(HomeError('not_logged_in'));
+    }
   }
 
+  bool isUserLoggedIn() {
+    return StorageService.isLoggedIn();
+  }
 
+  String getCurrentUserName() {
+    return StorageService.getCurrentUserName();
+  }
+
+  void _signOut(SignOutEvent event, Emitter<HomeState> emit) {
+    StorageService.signOut();
+    businessCardsList = [];
+    emit(HomeInitial());
+  }
 }

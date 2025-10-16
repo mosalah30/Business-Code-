@@ -1,8 +1,8 @@
-import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/material.dart';
 import 'package:business_code_by_mohamed_salah/core/constants/asset_constants.dart';
 import 'package:business_code_by_mohamed_salah/core/widgets/custom_text.dart';
 import 'package:business_code_by_mohamed_salah/core/widgets/custom_widget.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -12,41 +12,33 @@ import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/constants/color_constants.dart';
 import '../../../../../core/utils/snackbar.dart';
 import '../../../../../router/routes_constants.dart';
-import '../bloc/sign_up_bloc.dart';
+import '../bloc/sign_in_bloc.dart';
+import '../bloc/sign_in_event.dart';
+import '../bloc/sign_in_state.dart';
 
-class SignUpScreen extends StatefulWidget {
-  const SignUpScreen({super.key});
+class SignInScreen extends StatefulWidget {
+  const SignInScreen({super.key});
 
   @override
-  State<SignUpScreen> createState() => _SignUpScreenState();
+  State<SignInScreen> createState() => _SignInScreenState();
 }
 
-class _SignUpScreenState extends State<SignUpScreen> {
+class _SignInScreenState extends State<SignInScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _nameController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
 
-  String getErrorMessage() {
-    String errorText = '';
-    if (_nameController.text.isEmpty) {
-      errorText = "please_enter_name".tr();
-    } else if (isValidEmail(_emailController.text) == false || _emailController.text.isEmpty) {
+  String getLoginValidationError() {
+    String errorText = "";
+    if (_emailController.text.isEmpty || isValidEmail(_emailController.text) == false) {
       errorText = "enter_valid_email".tr();
     } else if (_passwordController.text.isEmpty) {
       errorText = "please_enter_password".tr();
     } else if (_passwordController.text.length < 8) {
       errorText = "password_length".tr();
-    } else if (_passwordController.text != _confirmPasswordController.text) {
-      errorText = "password_equal".tr();
     }
-    return errorText;
-  }
 
-  bool isValidPassword(String password) {
-    final regex = RegExp(r'^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$');
-    return regex.hasMatch(password);
+    return errorText;
   }
 
   bool isValidEmail(String email) {
@@ -57,19 +49,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
-    _nameController.dispose();
-    _confirmPasswordController.dispose();
     super.dispose();
   }
 
-  void _signup() {
+  void _signIn() {
     if (_formKey.currentState!.validate()) {
-      context.read<SignUpBloc>().add(
-        SignUpButtonPressed(
-          email: _emailController.text,
-          password: _passwordController.text,
-          name: _nameController.text,
-        ),
+      context.read<SignInBloc>().add(
+        SignEvent(email: _emailController.text.trim(), password: _passwordController.text),
       );
     }
   }
@@ -78,11 +64,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: BlocConsumer<SignUpBloc, SignUpState>(
+        child: BlocConsumer<SignInBloc, SignInState>(
           listener: (context, state) {
-            if (state is SignUpSuccess) {
-              context.go(RoutesConstants.homeRoute);
-            } else if (state is SignUpFailure) {
+            if (state is LoginSuccess) {
+              context.go(RoutesConstants.homeRoute,extra: UniqueKey());
+            } else if (state is LoginError) {
               SnackBarUtil.showErrorSnackBar(context: context, message: state.message.tr());
             }
           },
@@ -90,7 +76,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             alignment: Alignment.center,
             children: [
               IgnorePointer(
-                ignoring: state is SignUpLoading,
+                ignoring: state is LoginLoading,
                 child: Padding(
                   padding: const EdgeInsets.all(AppConstants.defaultPadding),
                   child: Form(
@@ -128,28 +114,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                         SizedBox(height: 24.h),
                         CustomTextWidget(
-                          text: 'register_title'.tr(),
+                          text: 'welcome_back'.tr(),
                           fontSize: 28.sp,
                           fontWeight: FontWeight.bold,
                           textAlign: TextAlign.center,
                         ),
                         SizedBox(height: 8.h),
                         CustomTextWidget(
-                          text: 'register_subtitle'.tr(),
+                          text: 'welcome_back_body'.tr(),
                           fontSize: 16.sp,
                           color: Colors.grey,
                           textAlign: TextAlign.center,
-                          overflow: TextOverflow.visible,
                         ),
                         SizedBox(height: 48.h),
-                        CustomFormField(
-                          icon: Icon(Icons.person, color: Colors.grey, size: 20.sp),
-                          label: "full_name".tr(),
-                          placeholder: "type_full_name".tr(),
-                          textEditingController: _nameController,
-                          keyboardType: TextInputType.emailAddress,
-                        ),
-                        SizedBox(height: 16.h),
                         CustomFormField(
                           icon: Icon(Icons.email_outlined, color: Colors.grey, size: 20.sp),
                           label: "email".tr(),
@@ -163,25 +140,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           placeholder: "enter_password".tr(),
                           textEditingController: _passwordController,
                         ),
-                        SizedBox(height: 16.h),
-                        PasswordField(
-                          label: "confirm_password".tr(),
-                          placeholder: "type_confirm_password".tr(),
-                          textEditingController: _confirmPasswordController,
-                        ),
                         SizedBox(height: 32.h),
-                        BlocBuilder<SignUpBloc, SignUpState>(
+                        BlocBuilder<SignInBloc, SignInState>(
                           builder: (context, state) {
                             return MainButton(
                               onPressed: () {
-                                String error = getErrorMessage();
+                                String error = getLoginValidationError();
                                 if (error.isNotEmpty) {
                                   SnackBarUtil.showErrorSnackBar(context: context, message: error);
                                   return;
                                 }
-                                _signup();
+                                _signIn();
                               },
-                              label: 'sign'.tr(),
+                              label: 'login'.tr(),
                             );
                           },
                         ),
@@ -189,12 +160,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            CustomTextWidget(text: "haveـaccount".tr()),
+                            CustomTextWidget(text: "not_haveـaccount".tr()),
                             TextButton(
                               onPressed: () {
-                                context.pushReplacement(RoutesConstants.signInRoute);
+                                context.pushReplacement(RoutesConstants.signUpRoute);
                               },
-                              child: CustomTextWidget(text: 'login'.tr(), color: ColorConstants.primaryColor),
+                              child: CustomTextWidget(text: 'sign'.tr(), color: ColorConstants.primaryColor),
                             ),
                           ],
                         ),
@@ -203,7 +174,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                 ),
               ),
-              if (state is SignUpLoading) ...[
+              if (state is LoginLoading) ...[
                 Container(color: Colors.black.withOpacity(0.2)),
                 Lottie.asset(LottieConstants.loadingLottie, width: 300.w),
               ],

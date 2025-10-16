@@ -127,7 +127,7 @@ class SnackBarUtil {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              title ?? 'Error'.tr(),
+              title ?? 'error'.tr(),
               style: TextStyle(color: Colors.black, fontSize: 16.sp, fontWeight: FontWeight.w600, letterSpacing: -0.05),
             ),
             SizedBox(height: 16.h),

@@ -7,24 +7,9 @@ abstract class HomeEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class CheckAuthEvent extends HomeEvent {}
+class AddCardEvent extends HomeEvent {}
+class SignOutEvent extends HomeEvent {}
 
-class SignUpEvent extends HomeEvent {
-  final String name;
-  final String email;
-  final String password;
-
-  const SignUpEvent({
-    required this.name,
-    required this.email,
-    required this.password,
-  });
-
-  @override
-  List<Object> get props => [name, email, password];
-}
-
-class AddCardEvent extends HomeEvent {
-}
+class InitEvent extends HomeEvent {}
 
 class ChangeLanguageEvent extends HomeEvent {}

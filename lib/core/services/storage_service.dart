@@ -1,7 +1,8 @@
+import 'package:business_code_by_mohamed_salah/core/utils/print.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../features/auth/data/models/user.dart';
 import '../../features/home/data/models/business_card.dart';
-import '../../features/home/data/models/user.dart';
 import '../constants/app_constants.dart';
 
 class StorageService {
@@ -69,11 +70,19 @@ class StorageService {
   static Future<User?> getUserByEmail(String email) async {
     final users = _userBox.values;
     try {
-      return users.firstWhere(
-        (user) => user.email.toLowerCase() == email.toLowerCase(),
-      );
+      return users.firstWhere((user) => user.email.toLowerCase() == email.toLowerCase());
     } catch (e) {
       return null;
+    }
+  }
+
+  static Future<void> deleteBusinessCardByUserId(String userId) async {
+    final cards = _cardBox.values.where((card) {
+      iPrint(card.userId);
+      return card.userId == userId;
+    }).toList();
+    for (final card in cards) {
+      await _cardBox.delete(card.id);
     }
   }
 
@@ -103,9 +112,7 @@ class StorageService {
     return _cardBox.values.toList();
   }
 
-  static Future<List<BusinessCard>> getBusinessCardsByUserId(
-    String userId,
-  ) async {
+  static Future<List<BusinessCard>> getBusinessCardsByUserId(String userId) async {
     return _cardBox.values.where((card) => card.userId == userId).toList();
   }
 
@@ -116,4 +123,23 @@ class StorageService {
   static Future<void> deleteBusinessCard(String id) async {
     await _cardBox.delete(id);
   }
+
+  static String getCurrentUserName() {
+    try {
+      final userId = getCurrentUserId();
+      if (userId != null) {
+        final user = _userBox.get(userId);
+        return user?.name ?? '';
+      }
+    } catch (e) {
+      return '';
+    }
+    return '';
+  }
+// Sign out user without clearing user data
+
+  static Future<void> signOut() async {
+    await clearSession();
+  }
+
 }

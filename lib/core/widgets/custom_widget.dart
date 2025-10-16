@@ -5,7 +5,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import '../constants/asset_constants.dart';
+import '../services/service_locator.dart';
 import 'custom_text.dart';
+
+import '../services/localization_service.dart';
 
 class PasswordField extends StatefulWidget {
   final String label;
@@ -178,5 +181,56 @@ class _CustomFormFieldState extends State<CustomFormField> with AutomaticKeepAli
   void initState() {
     super.initState();
     _hasFocus = widget.showHintByDefault;
+  }
+}
+
+class MainButton extends StatelessWidget {
+  final String label;
+  final bool? disabled;
+  final double? width;
+  final Color? color;
+  final TextStyle? textStyle;
+
+  final Function()? onPressed;
+
+  const MainButton({
+    Key? key,
+    required this.label,
+    this.disabled,
+    this.textStyle,
+    this.color,
+    required this.onPressed,
+    this.width,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: width ?? double.infinity,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        color: (disabled == null || disabled == false)
+            ? color ?? ColorConstants.primaryColor
+            : color?.withOpacity(.5) ?? Colors.black12,
+      ),
+      child: InkWell(
+        onTap: (disabled == null || disabled == false) ? onPressed : null,
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 12.h),
+          child: Center(
+            child: Text(
+              label,
+              style:
+                  textStyle ??
+                  TextStyle(
+                    color: Colors.white,
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.w500,
+                  ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

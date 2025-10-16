@@ -28,6 +28,12 @@ class _HomeScreenState extends State<HomeScreen> {
   final ScrollController _scrollController = ScrollController();
 
   @override
+  void initState() {
+    super.initState();
+    context.read<HomeBloc>().add(InitEvent());
+  }
+
+  @override
   void dispose() {
     _scrollController.dispose();
     super.dispose();
@@ -50,11 +56,14 @@ class _HomeScreenState extends State<HomeScreen> {
     return BlocConsumer<HomeBloc, HomeState>(
       listener: (context, state) {
         if (state is HomeLanguageChanged) {
+          context.read<HomeBloc>().add(InitEvent());
           iPrint(context.locale.languageCode);
-          SnackBarUtil.showSuccessSnackBar(context: context, message: "language_success".tr());
         }
         if (state is AddCardState) {
           _scrollToBottom();
+        }
+        if (state is HomeError) {
+          SnackBarUtil.showErrorSnackBar(context: context, message: state.message.tr());
         }
       },
       builder: (context, state) {
@@ -115,12 +124,15 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ],
           ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              context.read<HomeBloc>().add(AddCardEvent());
-            },
-            backgroundColor: ColorConstants.primaryColor,
-            child: SvgPicture.asset(AssetsConstant.scannerIcon, color: Colors.white, width: 35.w),
+          floatingActionButton: IgnorePointer(
+            ignoring: state is HomeLoading,
+            child: FloatingActionButton(
+              onPressed: () {
+                context.read<HomeBloc>().add(AddCardEvent());
+              },
+              backgroundColor: ColorConstants.primaryColor,
+              child: SvgPicture.asset(AssetsConstant.scannerIcon, color: Colors.white, width: 35.w),
+            ),
           ),
         );
       },

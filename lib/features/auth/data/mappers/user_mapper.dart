@@ -1,5 +1,5 @@
 import '../../domain/entities/user_entity.dart';
-import '../../../home/data/models/user.dart';
+import '../models/user.dart';
 
 class UserMapper {
   static UserEntity toEntity(User user) {

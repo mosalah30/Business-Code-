@@ -18,42 +18,36 @@ class BusinessCardAdapter extends TypeAdapter<BusinessCard> {
     };
     return BusinessCard(
       id: fields[0] as String,
-      name: fields[1] as String,
-      company: fields[2] as String,
-      phone: fields[3] as String,
-      email: fields[4] as String,
-      address: fields[5] as String,
-      imageUrl: fields[6] as String?,
-      createdAt: fields[7] as DateTime,
-      updatedAt: fields[8] as DateTime,
-      userId: fields[9] as String,
+      userId: fields[1] as String,
+      name: fields[2] as String,
+      title: fields[3] as String,
+      location: fields[4] as String,
+      email: fields[5] as String,
+      website: fields[6] as String,
+      avatarUrl: fields[7] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, BusinessCard obj) {
     writer
-      ..writeByte(10)
+      ..writeByte(8)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
-      ..write(obj.name)
+      ..write(obj.userId)
       ..writeByte(2)
-      ..write(obj.company)
+      ..write(obj.name)
       ..writeByte(3)
-      ..write(obj.phone)
+      ..write(obj.title)
       ..writeByte(4)
-      ..write(obj.email)
+      ..write(obj.location)
       ..writeByte(5)
-      ..write(obj.address)
+      ..write(obj.email)
       ..writeByte(6)
-      ..write(obj.imageUrl)
+      ..write(obj.website)
       ..writeByte(7)
-      ..write(obj.createdAt)
-      ..writeByte(8)
-      ..write(obj.updatedAt)
-      ..writeByte(9)
-      ..write(obj.userId);
+      ..write(obj.avatarUrl);
   }
 
   @override

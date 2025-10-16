@@ -1,6 +1,6 @@
 import 'dart:math';
+
 import 'package:business_code_by_mohamed_salah/core/services/storage_service.dart';
-import 'package:business_code_by_mohamed_salah/core/utils/print.dart';
 import 'package:business_code_by_mohamed_salah/features/home/domain/entities/business_card_entity.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -122,9 +122,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   void _getUserCard(InitEvent event, Emitter<HomeState> emit) async {
     emit(HomeLoading());
-    iPrint('cc');
     if (StorageService.isLoggedIn()) {
-      iPrint('cc');
       var either = await getBusinessCard(StorageService.getCurrentUserId()!);
       either.fold((l) => emit(HomeError(l.message)), (r) {
         businessCardsList = r;
@@ -139,7 +137,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     if (StorageService.isLoggedIn()) {
       final userId = StorageService.getCurrentUserId()!;
       var item = businessCards[Random().nextInt(businessCards.length)];
-      businessCardsList.add(item);
+      businessCardsList=[...businessCardsList, item];
       await saveBusinessCard(SaveParams(entity: item, userId: userId));
       await Future.delayed(const Duration(seconds: 1));
       emit(AddCardState());

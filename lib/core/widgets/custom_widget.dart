@@ -4,11 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
-import '../constants/asset_constants.dart';
-import '../services/service_locator.dart';
-import 'custom_text.dart';
 
-import '../services/localization_service.dart';
+import '../constants/asset_constants.dart';
+import 'custom_text.dart';
 
 class PasswordField extends StatefulWidget {
   final String label;

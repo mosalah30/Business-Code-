@@ -5,7 +5,6 @@ import '../../../domain/entities/user_entity.dart';
 import '../../../domain/use_cases/auth_usecase.dart';
 
 part 'sign_up_event.dart';
-
 part 'sign_up_state.dart';
 
 class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {

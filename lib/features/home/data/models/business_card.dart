@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+
 part 'business_card.g.dart'; // 👈 this is critical
 
 @HiveType(typeId: 1)

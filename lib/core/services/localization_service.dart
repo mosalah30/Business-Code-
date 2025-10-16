@@ -4,7 +4,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 
 import '../utils/print.dart';
-import '../utils/snackbar.dart';
 
 const englishLocalKey = "en";
 const arabicLocalKey = "ar";

@@ -39,7 +39,7 @@ class DrawerWidget extends StatelessWidget {
                       SizedBox(width: 16.w),
                       CustomTextWidget(
                         fontSize: 10.sp,
-                        text: '${'welcome'.tr()}, ${context.read<HomeBloc>().getCurrentUserName()}',
+                        text: '${'welcome_title'.tr()}, ${context.read<HomeBloc>().getCurrentUserName()}',
                         color: Colors.white,
                       ),
                     ],
@@ -48,7 +48,7 @@ class DrawerWidget extends StatelessWidget {
               : InkWell(
                   onTap: () {
                     context.pop();
-                    context.push(RoutesConstants.signInRoute);
+                    context.go(RoutesConstants.signInRoute);
                   },
                   child: Container(
                     margin: EdgeInsets.all(8.h),

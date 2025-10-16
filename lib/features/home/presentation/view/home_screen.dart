@@ -1,7 +1,6 @@
 import 'package:business_code_by_mohamed_salah/core/constants/app_constants.dart';
 import 'package:business_code_by_mohamed_salah/core/constants/asset_constants.dart';
 import 'package:business_code_by_mohamed_salah/core/constants/color_constants.dart';
-import 'package:business_code_by_mohamed_salah/core/utils/print.dart';
 import 'package:business_code_by_mohamed_salah/core/widgets/custom_text.dart';
 import 'package:business_code_by_mohamed_salah/features/home/presentation/bloc/home_bloc.dart';
 import 'package:business_code_by_mohamed_salah/features/home/presentation/bloc/home_state.dart';
@@ -57,7 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
       listener: (context, state) {
         if (state is HomeLanguageChanged) {
           context.read<HomeBloc>().add(InitEvent());
-          iPrint(context.locale.languageCode);
+          SnackBarUtil.showSuccessSnackBar(context: context, message: "language_success".tr());
         }
         if (state is AddCardState) {
           _scrollToBottom();

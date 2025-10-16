@@ -1,6 +1,5 @@
 import 'package:business_code_by_mohamed_salah/features/auth/domain/entities/user_entity.dart';
 import 'package:equatable/equatable.dart';
-import '../../../data/models/user.dart';
 
 abstract class SignInState extends Equatable {
   const SignInState();

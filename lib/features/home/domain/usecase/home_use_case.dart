@@ -1,5 +1,4 @@
 import 'package:business_code_by_mohamed_salah/core/error/failures.dart';
-
 import 'package:dartz/dartz.dart';
 
 import '../../../../core/models/use_case.dart';

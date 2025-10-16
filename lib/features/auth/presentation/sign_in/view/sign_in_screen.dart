@@ -8,6 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
+
 import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/constants/color_constants.dart';
 import '../../../../../core/utils/snackbar.dart';
@@ -90,7 +91,7 @@ class _SignInScreenState extends State<SignInScreen> {
                             SizedBox(width: 16.w),
                             InkWell(
                               onTap: () {
-                                context.pop();
+                                context.go(RoutesConstants.homeRoute);
                               },
                               child: Container(
                                 padding: EdgeInsets.all(8.r),

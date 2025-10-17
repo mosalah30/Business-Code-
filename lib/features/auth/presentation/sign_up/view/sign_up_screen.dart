@@ -105,7 +105,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             SizedBox(width: 16.w),
                             InkWell(
                               onTap: () {
-                                context.pop();
+                                context.go(RoutesConstants.homeRoute);
                               },
                               child: Container(
                                 padding: EdgeInsets.all(8.r),

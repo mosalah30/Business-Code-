@@ -3,260 +3,187 @@ import 'package:business_code_by_mohamed_salah/features/home/data/models/busines
 
 void main() {
   group('BusinessCard Model', () {
-    group('create factory', () {
+    group('constructor', () {
       test('should create business card with all fields', () {
-        const name = 'John Doe';
-        const company = 'Tech Corp';
-        const phone = '+1234567890';
-        const email = 'john@techcorp.com';
-        const address = '123 Tech Street';
+        const id = 'card-123';
         const userId = 'user-123';
-        const imageUrl = 'https://example.com/image.jpg';
+        const name = 'John Doe';
+        const title = 'Software Engineer';
+        const location = 'San Francisco, CA';
+        const email = 'john@techcorp.com';
+        const website = 'https://johndoe.com';
+        const avatarUrl = 'https://example.com/avatar.jpg';
 
-        final card = BusinessCard.create(
-          name: name,
-          company: company,
-          phone: phone,
-          email: email,
-          address: address,
+        final card = BusinessCard(
+          id: id,
           userId: userId,
-          imageUrl: imageUrl,
+          name: name,
+          title: title,
+          location: location,
+          email: email,
+          website: website,
+          avatarUrl: avatarUrl,
         );
 
-        expect(card.name, equals(name));
-        expect(card.company, equals(company));
-        expect(card.phone, equals(phone));
-        expect(card.email, equals(email));
-        expect(card.address, equals(address));
+        expect(card.id, equals(id));
         expect(card.userId, equals(userId));
-        expect(card.imageUrl, equals(imageUrl));
-        expect(card.id, isNotEmpty);
-        expect(card.createdAt, isNotNull);
-        expect(card.updatedAt, isNotNull);
-        expect(card.createdAt, equals(card.updatedAt));
+        expect(card.name, equals(name));
+        expect(card.title, equals(title));
+        expect(card.location, equals(location));
+        expect(card.email, equals(email));
+        expect(card.website, equals(website));
+        expect(card.avatarUrl, equals(avatarUrl));
       });
 
-      test('should create business card without image URL', () {
-        const name = 'John Doe';
-        const company = 'Tech Corp';
-        const phone = '+1234567890';
-        const email = 'john@techcorp.com';
-        const address = '123 Tech Street';
+      test('should create multiple cards with different data', () {
+        final card1 = BusinessCard(
+          id: 'card-1',
+          userId: 'user-123',
+          name: 'John Doe',
+          title: 'Software Engineer',
+          location: 'San Francisco, CA',
+          email: 'john@techcorp.com',
+          website: 'https://johndoe.com',
+          avatarUrl: 'https://example.com/avatar1.jpg',
+        );
+
+        final card2 = BusinessCard(
+          id: 'card-2',
+          userId: 'user-123',
+          name: 'Jane Smith',
+          title: 'Product Manager',
+          location: 'New York, NY',
+          email: 'jane@design.com',
+          website: 'https://janesmith.com',
+          avatarUrl: 'https://example.com/avatar2.jpg',
+        );
+
+        expect(card1.id, isNot(equals(card2.id)));
+        expect(card1.name, isNot(equals(card2.name)));
+        expect(card1.email, isNot(equals(card2.email)));
+      });
+    });
+
+    group('field validation', () {
+      test('should have all required fields', () {
+        final card = BusinessCard(
+          id: 'card-123',
+          userId: 'user-123',
+          name: 'John Doe',
+          title: 'Software Engineer',
+          location: 'San Francisco, CA',
+          email: 'john@techcorp.com',
+          website: 'https://johndoe.com',
+          avatarUrl: 'https://example.com/avatar.jpg',
+        );
+
+        expect(card.id, isNotEmpty);
+        expect(card.userId, isNotEmpty);
+        expect(card.name, isNotEmpty);
+        expect(card.title, isNotEmpty);
+        expect(card.location, isNotEmpty);
+        expect(card.email, isNotEmpty);
+        expect(card.website, isNotEmpty);
+        expect(card.avatarUrl, isNotEmpty);
+      });
+
+      test('should allow empty strings for optional-like fields', () {
+        final card = BusinessCard(
+          id: 'card-123',
+          userId: 'user-123',
+          name: 'John Doe',
+          title: '',
+          location: '',
+          email: 'john@techcorp.com',
+          website: '',
+          avatarUrl: '',
+        );
+
+        expect(card.title, isEmpty);
+        expect(card.location, isEmpty);
+        expect(card.website, isEmpty);
+        expect(card.avatarUrl, isEmpty);
+      });
+    });
+
+    group('userId association', () {
+      test('should associate card with correct user', () {
+        const userId = 'user-123';
+        final card = BusinessCard(
+          id: 'card-123',
+          userId: userId,
+          name: 'John Doe',
+          title: 'Software Engineer',
+          location: 'San Francisco, CA',
+          email: 'john@techcorp.com',
+          website: 'https://johndoe.com',
+          avatarUrl: 'https://example.com/avatar.jpg',
+        );
+
+        expect(card.userId, equals(userId));
+      });
+
+      test('should allow multiple cards for same user', () {
         const userId = 'user-123';
 
-        final card = BusinessCard.create(
-          name: name,
-          company: company,
-          phone: phone,
-          email: email,
-          address: address,
+        final card1 = BusinessCard(
+          id: 'card-1',
           userId: userId,
-        );
-
-        expect(card.imageUrl, isNull);
-        expect(card.name, equals(name));
-        expect(card.company, equals(company));
-      });
-
-      test('should generate unique IDs for different cards', () {
-        final card1 = BusinessCard.create(
           name: 'John Doe',
-          company: 'Tech Corp',
-          phone: '+1234567890',
+          title: 'Software Engineer',
+          location: 'San Francisco, CA',
           email: 'john@techcorp.com',
-          address: '123 Tech Street',
-          userId: 'user-123',
+          website: 'https://johndoe.com',
+          avatarUrl: 'https://example.com/avatar1.jpg',
         );
 
-        final card2 = BusinessCard.create(
+        final card2 = BusinessCard(
+          id: 'card-2',
+          userId: userId,
           name: 'Jane Smith',
-          company: 'Design Inc',
-          phone: '+0987654321',
+          title: 'Product Manager',
+          location: 'New York, NY',
           email: 'jane@design.com',
-          address: '456 Design Ave',
-          userId: 'user-123',
+          website: 'https://janesmith.com',
+          avatarUrl: 'https://example.com/avatar2.jpg',
         );
 
+        expect(card1.userId, equals(card2.userId));
         expect(card1.id, isNot(equals(card2.id)));
       });
     });
 
-    group('copyWith', () {
-      late BusinessCard originalCard;
+    group('data integrity', () {
+      test('should maintain field values after creation', () {
+        const id = 'card-123';
+        const userId = 'user-123';
+        const name = 'John Doe';
+        const title = 'Software Engineer';
+        const location = 'San Francisco, CA';
+        const email = 'john@techcorp.com';
+        const website = 'https://johndoe.com';
+        const avatarUrl = 'https://example.com/avatar.jpg';
 
-      setUp(() {
-        originalCard = BusinessCard.create(
-          name: 'John Doe',
-          company: 'Tech Corp',
-          phone: '+1234567890',
-          email: 'john@techcorp.com',
-          address: '123 Tech Street',
-          userId: 'user-123',
-        );
-      });
-
-      test('should create new card with updated name', () {
-        final updatedCard = originalCard.copyWith(name: 'Jane Doe');
-
-        expect(updatedCard.name, equals('Jane Doe'));
-        expect(updatedCard.company, equals(originalCard.company));
-        expect(updatedCard.id, equals(originalCard.id));
-        expect(updatedCard.createdAt, equals(originalCard.createdAt));
-        expect(updatedCard.updatedAt, isNot(equals(originalCard.updatedAt)));
-      });
-
-      test('should create new card with updated company', () {
-        final updatedCard = originalCard.copyWith(company: 'New Corp');
-
-        expect(updatedCard.company, equals('New Corp'));
-        expect(updatedCard.name, equals(originalCard.name));
-        expect(updatedCard.id, equals(originalCard.id));
-      });
-
-      test('should create new card with updated phone', () {
-        final updatedCard = originalCard.copyWith(phone: '+9999999999');
-
-        expect(updatedCard.phone, equals('+9999999999'));
-        expect(updatedCard.name, equals(originalCard.name));
-      });
-
-      test('should create new card with updated email', () {
-        final updatedCard = originalCard.copyWith(email: 'new@example.com');
-
-        expect(updatedCard.email, equals('new@example.com'));
-        expect(updatedCard.name, equals(originalCard.name));
-      });
-
-      test('should create new card with updated address', () {
-        final updatedCard = originalCard.copyWith(address: 'New Address');
-
-        expect(updatedCard.address, equals('New Address'));
-        expect(updatedCard.name, equals(originalCard.name));
-      });
-
-      test('should create new card with updated userId', () {
-        final updatedCard = originalCard.copyWith(userId: 'user-456');
-
-        expect(updatedCard.userId, equals('user-456'));
-        expect(updatedCard.name, equals(originalCard.name));
-      });
-
-      test('should keep original values when no parameters provided', () {
-        final copiedCard = originalCard.copyWith();
-
-        expect(copiedCard.name, equals(originalCard.name));
-        expect(copiedCard.company, equals(originalCard.company));
-        expect(copiedCard.phone, equals(originalCard.phone));
-        expect(copiedCard.email, equals(originalCard.email));
-        expect(copiedCard.address, equals(originalCard.address));
-        expect(copiedCard.userId, equals(originalCard.userId));
-        expect(copiedCard.id, equals(originalCard.id));
-        expect(copiedCard.createdAt, equals(originalCard.createdAt));
-      });
-    });
-
-    group('isValid', () {
-      test('should return true for card with name, company, and phone', () {
-        final card = BusinessCard.create(
-          name: 'John Doe',
-          company: 'Tech Corp',
-          phone: '+1234567890',
-          email: '',
-          address: '123 Tech Street',
-          userId: 'user-123',
+        final card = BusinessCard(
+          id: id,
+          userId: userId,
+          name: name,
+          title: title,
+          location: location,
+          email: email,
+          website: website,
+          avatarUrl: avatarUrl,
         );
 
-        expect(card.isValid(), isTrue);
-      });
-
-      test('should return true for card with name, company, and email', () {
-        final card = BusinessCard.create(
-          name: 'John Doe',
-          company: 'Tech Corp',
-          phone: '',
-          email: 'john@techcorp.com',
-          address: '123 Tech Street',
-          userId: 'user-123',
-        );
-
-        expect(card.isValid(), isTrue);
-      });
-
-      test(
-        'should return true for card with name, company, phone, and email',
-        () {
-          final card = BusinessCard.create(
-            name: 'John Doe',
-            company: 'Tech Corp',
-            phone: '+1234567890',
-            email: 'john@techcorp.com',
-            address: '123 Tech Street',
-            userId: 'user-123',
-          );
-
-          expect(card.isValid(), isTrue);
-        },
-      );
-
-      test('should return false for card without name', () {
-        final card = BusinessCard.create(
-          name: '',
-          company: 'Tech Corp',
-          phone: '+1234567890',
-          email: 'john@techcorp.com',
-          address: '123 Tech Street',
-          userId: 'user-123',
-        );
-
-        expect(card.isValid(), isFalse);
-      });
-
-      test('should return false for card without company', () {
-        final card = BusinessCard.create(
-          name: 'John Doe',
-          company: '',
-          phone: '+1234567890',
-          email: 'john@techcorp.com',
-          address: '123 Tech Street',
-          userId: 'user-123',
-        );
-
-        expect(card.isValid(), isFalse);
-      });
-
-      test('should return false for card without phone and email', () {
-        final card = BusinessCard.create(
-          name: 'John Doe',
-          company: 'Tech Corp',
-          phone: '',
-          email: '',
-          address: '123 Tech Street',
-          userId: 'user-123',
-        );
-
-        expect(card.isValid(), isFalse);
-      });
-    });
-
-    group('toString', () {
-      test('should return formatted string representation', () {
-        final card = BusinessCard.create(
-          name: 'John Doe',
-          company: 'Tech Corp',
-          phone: '+1234567890',
-          email: 'john@techcorp.com',
-          address: '123 Tech Street',
-          userId: 'user-123',
-        );
-
-        final result = card.toString();
-
-        expect(result, contains('BusinessCard('));
-        expect(result, contains('id: ${card.id}'));
-        expect(result, contains('name: ${card.name}'));
-        expect(result, contains('company: ${card.company}'));
-        expect(result, contains('phone: ${card.phone}'));
-        expect(result, contains('email: ${card.email}'));
+        // Verify all fields remain unchanged
+        expect(card.id, equals(id));
+        expect(card.userId, equals(userId));
+        expect(card.name, equals(name));
+        expect(card.title, equals(title));
+        expect(card.location, equals(location));
+        expect(card.email, equals(email));
+        expect(card.website, equals(website));
+        expect(card.avatarUrl, equals(avatarUrl));
       });
     });
   });
